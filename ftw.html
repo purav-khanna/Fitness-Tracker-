@@ -1,435 +1,497 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Fitness Tracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <!-- Onboarding Modal -->
-  <div id="onboarding-overlay" class="modal-overlay hidden">
-    <div class="modal">
-      <h2>Welcome to Fitness Tracker</h2>
-      <p>Let’s quickly personalise your experience.</p>
-      <form id="onboarding-form">
-        <div class="form-group">
-          <label for="onboard-name">What should we call you?</label>
-          <input type="text" id="onboard-name" required />
-        </div>
-        <div class="form-group">
-          <label for="onboard-focus">Main fitness focus</label>
-          <select id="onboard-focus">
-            <option value="">Just exploring</option>
-            <option value="Weight loss">Weight loss</option>
-            <option value="Muscle gain">Muscle gain</option>
-            <option value="Endurance">Endurance</option>
-            <option value="General fitness">General fitness</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn primary">Save</button>
-          <button type="button" id="onboard-skip" class="btn">Skip for now</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Toasts -->
-  <div id="toast-container"></div>
-
-  <header class="site-header">
-    <div class="header-left">
-      <div class="logo">Fitness Tracker</div>
-      <div class="user-avatar" id="user-avatar">?</div>
-    </div>
-
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-      🌙
-    </button>
-
-    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-      ☰
-    </button>
-
-    <nav class="site-nav" id="site-nav">
-      <ul>
-        <li><a href="#" class="nav-link active" data-target="dashboard">Dashboard</a></li>
-        <li><a href="#" class="nav-link" data-target="workouts">Workouts</a></li>
-        <li><a href="#" class="nav-link" data-target="goals">Goals</a></li>
-        <li><a href="#" class="nav-link" data-target="profile">Profile</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main class="site-main">
-    <!-- DASHBOARD SECTION -->
-    <section id="dashboard" class="page-section active">
-      <h1 id="dashboard-greeting">Welcome!</h1>
-      <p class="dashboard-subtitle">
-        Track your workouts, goals, and progress in one place.
-      </p>
-
-      <div class="quick-actions">
-        <button class="btn primary" id="quick-add-workout">+ Add Workout</button>
-        <button class="btn" id="quick-add-goal">+ Add Goal</button>
-      </div>
-
-      <div class="cards-grid">
-        <div class="card">
-          <h3>Workouts This Week</h3>
-          <p class="card-value" id="stat-workouts-week">0</p>
-        </div>
-        <div class="card">
-          <h3>Workouts (Selected Range)</h3>
-          <p class="card-value" id="stat-workouts-total">0</p>
-        </div>
-        <div class="card">
-          <h3>Current Weight</h3>
-          <p class="card-value" id="stat-current-weight">–</p>
-        </div>
-        <div class="card">
-          <h3>Active Goal</h3>
-          <p class="card-value" id="stat-active-goal-name">No active goals</p>
-        </div>
-        <div class="card">
-          <h3>Top Workout Type</h3>
-          <p class="card-value" id="stat-top-type">–</p>
-        </div>
-      </div>
-
-      <div class="dashboard-progress">
-        <h2>Goal Progress</h2>
-        <div class="progress-wrapper">
-          <div class="progress-bar">
-            <div class="progress-bar-fill" id="stat-active-goal-progress" style="width: 0%;"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fitness Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Onboarding Modal -->
+    <div id="onboarding-overlay" class="modal-overlay hidden">
+      <div class="modal">
+        <h2>Welcome to Fitness Tracker</h2>
+        <p>Let’s quickly personalise your experience.</p>
+        <form id="onboarding-form">
+          <div class="form-group">
+            <label for="onboard-name">What should we call you?</label>
+            <input type="text" id="onboard-name" required />
           </div>
-          <span id="stat-active-goal-progress-label">0%</span>
-        </div>
-        <p class="progress-caption">
-          Progress toward your nearest active goal.
-        </p>
-      </div>
-
-      <div class="dashboard-stats-extra">
-        <div class="dashboard-stats-header">
-          <h2>Training Stats</h2>
-          <select id="dashboard-range">
-            <option value="all">All time</option>
-            <option value="week">This week</option>
-            <option value="month">This month</option>
-          </select>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stats-item">
-            <span class="stats-label">Total training time</span>
-            <span class="stats-value" id="stat-total-time">0 min</span>
+          <div class="form-group">
+            <label for="onboard-focus">Main fitness focus</label>
+            <select id="onboard-focus">
+              <option value="">Just exploring</option>
+              <option value="Weight loss">Weight loss</option>
+              <option value="Muscle gain">Muscle gain</option>
+              <option value="Endurance">Endurance</option>
+              <option value="General fitness">General fitness</option>
+            </select>
           </div>
-          <div class="stats-item">
-            <span class="stats-label">Total sets (strength)</span>
-            <span class="stats-value" id="stat-total-sets">0</span>
-          </div>
-          <div class="stats-item">
-            <span class="stats-label">Total reps (strength)</span>
-            <span class="stats-value" id="stat-total-reps">0</span>
-          </div>
-          <div class="stats-item">
-            <span class="stats-label">Current streak</span>
-            <span class="stats-value" id="stat-current-streak">0 days</span>
-          </div>
-          <div class="stats-item">
-            <span class="stats-label">Best streak</span>
-            <span class="stats-value" id="stat-best-streak">0 days</span>
-          </div>
-        </div>
-
-        <h3 class="stats-subtitle">Workouts by Type</h3>
-        <ul id="stat-workouts-by-type" class="stats-list">
-          <!-- JS fills this -->
-        </ul>
-      </div>
-
-      <div class="dashboard-achievements">
-        <h2>Achievements</h2>
-        <ul id="achievements-list" class="achievements-list">
-          <!-- JS will insert achievements -->
-        </ul>
-      </div>
-    </section>
-
-    <!-- WORKOUTS SECTION -->
-    <section id="workouts" class="page-section">
-      <div class="section-header">
-        <h2>Workouts</h2>
-        <p>Log and manage your daily workouts.</p>
-      </div>
-
-      <div class="two-column">
-        <!-- Workout Form -->
-        <div class="panel">
-          <h3 id="workout-form-title">Add Workout</h3>
-          <form id="workout-form">
-            <input type="hidden" id="workout-id" />
-
-            <div class="form-group">
-              <label for="workout-date">Date</label>
-              <input type="date" id="workout-date" required />
-            </div>
-
-            <div class="form-group">
-              <label for="workout-type">Type</label>
-              <select id="workout-type" required>
-                <option value="">Select type</option>
-                <option value="Strength">Strength</option>
-                <option value="Cardio">Cardio</option>
-                <option value="Flexibility">Flexibility</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="workout-exercise">Exercise Name</label>
-              <input type="text" id="workout-exercise" placeholder="Bench press, Running, etc." required />
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="workout-sets">Sets</label>
-                <input type="number" id="workout-sets" min="0" />
-              </div>
-              <div class="form-group">
-                <label for="workout-reps">Reps</label>
-                <input type="number" id="workout-reps" min="0" />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="workout-weight-duration">Weight (kg) / Duration (min)</label>
-              <input type="number" id="workout-weight-duration" min="0" />
-            </div>
-
-            <div class="form-group">
-              <label for="workout-notes">Notes</label>
-              <textarea id="workout-notes" rows="3" placeholder="Optional notes"></textarea>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn primary">Save Workout</button>
-              <button type="button" id="workout-form-reset" class="btn">Clear</button>
-            </div>
-
-            <p class="form-message" id="workout-form-message"></p>
-          </form>
-        </div>
-
-        <!-- Workout List & Filters -->
-        <div class="panel">
-          <h3>Workout History</h3>
-
-          <div class="filters">
-            <div class="form-group">
-              <label for="filter-workout-type">Filter by Type</label>
-              <select id="filter-workout-type">
-                <option value="All">All</option>
-                <option value="Strength">Strength</option>
-                <option value="Cardio">Cardio</option>
-                <option value="Flexibility">Flexibility</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="filter-date-from">From</label>
-                <input type="date" id="filter-date-from" />
-              </div>
-              <div class="form-group">
-                <label for="filter-date-to">To</label>
-                <input type="date" id="filter-date-to" />
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn" id="apply-workout-filters">Apply Filters</button>
-              <button type="button" class="btn secondary" id="clear-workout-filters">Clear Filters</button>
-            </div>
-          </div>
-
-          <div class="table-wrapper">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Type</th>
-                  <th>Exercise</th>
-                  <th>Sets x Reps</th>
-                  <th>Weight/Duration</th>
-                  <th>Notes</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="workouts-table-body">
-                <!-- JS will inject rows -->
-              </tbody>
-            </table>
-            <div class="empty-card" id="workouts-empty-state">
-              <div class="empty-emoji">💪</div>
-              <div class="empty-text">
-                <h4>No workouts yet</h4>
-                <p>Log your first workout to start building your streak.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GOALS SECTION -->
-    <section id="goals" class="page-section">
-      <div class="section-header">
-        <h2>Goals</h2>
-        <p>Create and track your fitness goals.</p>
-      </div>
-
-      <div class="two-column">
-        <!-- Goal Form -->
-        <div class="panel">
-          <h3>Add Goal</h3>
-          <form id="goal-form">
-            <div class="form-group">
-              <label for="goal-name">Goal Name</label>
-              <input type="text" id="goal-name" placeholder="Lose 5 kg, Run 5km, etc." required />
-            </div>
-
-            <div class="form-group">
-              <label for="goal-category">Category</label>
-              <select id="goal-category" required>
-                <option value="">Select category</option>
-                <option value="Weight">Weight</option>
-                <option value="Strength">Strength</option>
-                <option value="Endurance">Endurance</option>
-                <option value="Habit">Habit</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="goal-target-value">Target Value</label>
-                <input type="number" id="goal-target-value" step="0.1" min="0" required />
-              </div>
-              <div class="form-group">
-                <label for="goal-current-value">Current Value</label>
-                <input type="number" id="goal-current-value" step="0.1" min="0" required />
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="goal-start-date">Start Date</label>
-                <input type="date" id="goal-start-date" required />
-              </div>
-              <div class="form-group">
-                <label for="goal-target-date">Target Date</label>
-                <input type="date" id="goal-target-date" required />
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn primary">Save Goal</button>
-            </div>
-
-            <p class="form-message" id="goal-form-message"></p>
-          </form>
-        </div>
-
-        <!-- Goals List -->
-        <div class="panel">
-          <h3>Your Goals</h3>
-          <div id="goals-list" class="goals-list">
-            <!-- JS will inject goal cards -->
-          </div>
-          <div class="empty-card" id="goals-empty-state">
-            <div class="empty-emoji">🎯</div>
-            <div class="empty-text">
-              <h4>No goals yet</h4>
-              <p>Create your first goal and track progress here.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROFILE SECTION -->
-    <section id="profile" class="page-section">
-      <div class="section-header">
-        <h2>Profile</h2>
-        <p>Update your basic information.</p>
-      </div>
-
-      <div class="panel">
-        <form id="profile-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="profile-name">Name</label>
-              <input type="text" id="profile-name" placeholder="Your name" />
-            </div>
-            <div class="form-group">
-              <label for="profile-age">Age</label>
-              <input type="number" id="profile-age" min="0" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="profile-gender">Gender</label>
-              <select id="profile-gender">
-                <option value="">Prefer not to say</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="profile-height">Height (cm)</label>
-              <input type="number" id="profile-height" min="0" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="profile-weight">Current Weight (kg)</label>
-              <input type="number" id="profile-weight" step="0.1" min="0" />
-            </div>
-            <div class="form-group">
-              <label for="profile-target-weight">Target Weight (kg)</label>
-              <input type="number" id="profile-target-weight" step="0.1" min="0" />
-            </div>
-          </div>
-
           <div class="form-actions">
-            <button type="submit" class="btn primary">Save Profile</button>
+            <button type="submit" class="btn primary">Save</button>
+            <button type="button" id="onboard-skip" class="btn">
+              Skip for now
+            </button>
           </div>
-
-          <p class="form-message" id="profile-form-message"></p>
         </form>
+      </div>
+    </div>
 
-        <div class="profile-stats">
-          <h3>Health Stats</h3>
-          <p><strong>BMI:</strong> <span id="profile-bmi">–</span></p>
-          <p class="small-text">
-            BMI is an estimate only and may not reflect actual health status.
+    <!-- Toasts -->
+    <div id="toast-container"></div>
+
+    <header class="site-header">
+      <div class="header-left">
+        <div class="logo">Fitness Tracker</div>
+        <div class="user-avatar" id="user-avatar">?</div>
+      </div>
+
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        🌙
+      </button>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        ☰
+      </button>
+
+      <nav class="site-nav" id="site-nav">
+        <ul>
+          <li>
+            <a href="#" class="nav-link active" data-target="dashboard"
+              >Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="workouts">Workouts</a>
+          </li>
+          <li><a href="#" class="nav-link" data-target="goals">Goals</a></li>
+          <li>
+            <a href="#" class="nav-link" data-target="profile">Profile</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="site-main">
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboard" class="page-section active">
+        <h1 id="dashboard-greeting">Welcome!</h1>
+        <p class="dashboard-subtitle">
+          Track your workouts, goals, and progress in one place.
+        </p>
+
+        <div class="quick-actions">
+          <button class="btn primary" id="quick-add-workout">
+            + Add Workout
+          </button>
+          <button class="btn" id="quick-add-goal">+ Add Goal</button>
+        </div>
+
+        <div class="cards-grid">
+          <div class="card">
+            <h3>Workouts This Week</h3>
+            <p class="card-value" id="stat-workouts-week">0</p>
+          </div>
+          <div class="card">
+            <h3>Workouts (Selected Range)</h3>
+            <p class="card-value" id="stat-workouts-total">0</p>
+          </div>
+          <div class="card">
+            <h3>Current Weight</h3>
+            <p class="card-value" id="stat-current-weight">–</p>
+          </div>
+          <div class="card">
+            <h3>Active Goal</h3>
+            <p class="card-value" id="stat-active-goal-name">No active goals</p>
+          </div>
+          <div class="card">
+            <h3>Top Workout Type</h3>
+            <p class="card-value" id="stat-top-type">–</p>
+          </div>
+        </div>
+
+        <div class="dashboard-progress">
+          <h2>Goal Progress</h2>
+          <div class="progress-wrapper">
+            <div class="progress-bar">
+              <div
+                class="progress-bar-fill"
+                id="stat-active-goal-progress"
+                style="width: 0%"
+              ></div>
+            </div>
+            <span id="stat-active-goal-progress-label">0%</span>
+          </div>
+          <p class="progress-caption">
+            Progress toward your nearest active goal.
           </p>
         </div>
-      </div>
-    </section>
-  </main>
 
-  <footer class="site-footer">
-    <p>&copy; <span id="footer-year"></span> Fitness Tracker. All rights reserved.</p>
-  </footer>
+        <div class="dashboard-stats-extra">
+          <div class="dashboard-stats-header">
+            <h2>Training Stats</h2>
+            <select id="dashboard-range">
+              <option value="all">All time</option>
+              <option value="week">This week</option>
+              <option value="month">This month</option>
+            </select>
+          </div>
 
-  <script src="script.js"></script>
-</body>
+          <div class="stats-grid">
+            <div class="stats-item">
+              <span class="stats-label">Total training time</span>
+              <span class="stats-value" id="stat-total-time">0 min</span>
+            </div>
+            <div class="stats-item">
+              <span class="stats-label">Total sets (strength)</span>
+              <span class="stats-value" id="stat-total-sets">0</span>
+            </div>
+            <div class="stats-item">
+              <span class="stats-label">Total reps (strength)</span>
+              <span class="stats-value" id="stat-total-reps">0</span>
+            </div>
+            <div class="stats-item">
+              <span class="stats-label">Current streak</span>
+              <span class="stats-value" id="stat-current-streak">0 days</span>
+            </div>
+            <div class="stats-item">
+              <span class="stats-label">Best streak</span>
+              <span class="stats-value" id="stat-best-streak">0 days</span>
+            </div>
+          </div>
+
+          <h3 class="stats-subtitle">Workouts by Type</h3>
+          <ul id="stat-workouts-by-type" class="stats-list">
+            <!-- JS fills this -->
+          </ul>
+        </div>
+
+        <div class="dashboard-achievements">
+          <h2>Achievements</h2>
+          <ul id="achievements-list" class="achievements-list">
+            <!-- JS will insert achievements -->
+          </ul>
+        </div>
+      </section>
+
+      <!-- WORKOUTS SECTION -->
+      <section id="workouts" class="page-section">
+        <div class="section-header">
+          <h2>Workouts</h2>
+          <p>Log and manage your daily workouts.</p>
+        </div>
+
+        <div class="two-column">
+          <!-- Workout Form -->
+          <div class="panel">
+            <h3 id="workout-form-title">Add Workout</h3>
+            <form id="workout-form">
+              <input type="hidden" id="workout-id" />
+
+              <div class="form-group">
+                <label for="workout-date">Date</label>
+                <input type="date" id="workout-date" required />
+              </div>
+
+              <div class="form-group">
+                <label for="workout-type">Type</label>
+                <select id="workout-type" required>
+                  <option value="">Select type</option>
+                  <option value="Strength">Strength</option>
+                  <option value="Cardio">Cardio</option>
+                  <option value="Flexibility">Flexibility</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="workout-exercise">Exercise Name</label>
+                <input
+                  type="text"
+                  id="workout-exercise"
+                  placeholder="Bench press, Running, etc."
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="workout-sets">Sets</label>
+                  <input type="number" id="workout-sets" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="workout-reps">Reps</label>
+                  <input type="number" id="workout-reps" min="0" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="workout-weight-duration"
+                  >Weight (kg) / Duration (min)</label
+                >
+                <input type="number" id="workout-weight-duration" min="0" />
+              </div>
+
+              <div class="form-group">
+                <label for="workout-notes">Notes</label>
+                <textarea
+                  id="workout-notes"
+                  rows="3"
+                  placeholder="Optional notes"
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn primary">Save Workout</button>
+                <button type="button" id="workout-form-reset" class="btn">
+                  Clear
+                </button>
+              </div>
+
+              <p class="form-message" id="workout-form-message"></p>
+            </form>
+          </div>
+
+          <!-- Workout List & Filters -->
+          <div class="panel">
+            <h3>Workout History</h3>
+
+            <div class="filters">
+              <div class="form-group">
+                <label for="filter-workout-type">Filter by Type</label>
+                <select id="filter-workout-type">
+                  <option value="All">All</option>
+                  <option value="Strength">Strength</option>
+                  <option value="Cardio">Cardio</option>
+                  <option value="Flexibility">Flexibility</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="filter-date-from">From</label>
+                  <input type="date" id="filter-date-from" />
+                </div>
+                <div class="form-group">
+                  <label for="filter-date-to">To</label>
+                  <input type="date" id="filter-date-to" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn" id="apply-workout-filters">
+                  Apply Filters
+                </button>
+                <button
+                  type="button"
+                  class="btn secondary"
+                  id="clear-workout-filters"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Exercise</th>
+                    <th>Sets x Reps</th>
+                    <th>Weight/Duration</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="workouts-table-body">
+                  <!-- JS will inject rows -->
+                </tbody>
+              </table>
+              <div class="empty-card" id="workouts-empty-state">
+                <div class="empty-emoji">💪</div>
+                <div class="empty-text">
+                  <h4>No workouts yet</h4>
+                  <p>Log your first workout to start building your streak.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOALS SECTION -->
+      <section id="goals" class="page-section">
+        <div class="section-header">
+          <h2>Goals</h2>
+          <p>Create and track your fitness goals.</p>
+        </div>
+
+        <div class="two-column">
+          <!-- Goal Form -->
+          <div class="panel">
+            <h3>Add Goal</h3>
+            <form id="goal-form">
+              <div class="form-group">
+                <label for="goal-name">Goal Name</label>
+                <input
+                  type="text"
+                  id="goal-name"
+                  placeholder="Lose 5 kg, Run 5km, etc."
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="goal-category">Category</label>
+                <select id="goal-category" required>
+                  <option value="">Select category</option>
+                  <option value="Weight">Weight</option>
+                  <option value="Strength">Strength</option>
+                  <option value="Endurance">Endurance</option>
+                  <option value="Habit">Habit</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="goal-target-value">Target Value</label>
+                  <input
+                    type="number"
+                    id="goal-target-value"
+                    step="0.1"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="goal-current-value">Current Value</label>
+                  <input
+                    type="number"
+                    id="goal-current-value"
+                    step="0.1"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="goal-start-date">Start Date</label>
+                  <input type="date" id="goal-start-date" required />
+                </div>
+                <div class="form-group">
+                  <label for="goal-target-date">Target Date</label>
+                  <input type="date" id="goal-target-date" required />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn primary">Save Goal</button>
+              </div>
+
+              <p class="form-message" id="goal-form-message"></p>
+            </form>
+          </div>
+
+          <!-- Goals List -->
+          <div class="panel">
+            <h3>Your Goals</h3>
+            <div id="goals-list" class="goals-list">
+              <!-- JS will inject goal cards -->
+            </div>
+            <div class="empty-card" id="goals-empty-state">
+              <div class="empty-emoji">🎯</div>
+              <div class="empty-text">
+                <h4>No goals yet</h4>
+                <p>Create your first goal and track progress here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE SECTION -->
+      <section id="profile" class="page-section">
+        <div class="section-header">
+          <h2>Profile</h2>
+          <p>Update your basic information.</p>
+        </div>
+
+        <div class="panel">
+          <form id="profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profile-name">Name</label>
+                <input type="text" id="profile-name" placeholder="Your name" />
+              </div>
+              <div class="form-group">
+                <label for="profile-age">Age</label>
+                <input type="number" id="profile-age" min="0" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profile-gender">Gender</label>
+                <select id="profile-gender">
+                  <option value="">Prefer not to say</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profile-height">Height (cm)</label>
+                <input type="number" id="profile-height" min="0" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profile-weight">Current Weight (kg)</label>
+                <input type="number" id="profile-weight" step="0.1" min="0" />
+              </div>
+              <div class="form-group">
+                <label for="profile-target-weight">Target Weight (kg)</label>
+                <input
+                  type="number"
+                  id="profile-target-weight"
+                  step="0.1"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Save Profile</button>
+            </div>
+
+            <p class="form-message" id="profile-form-message"></p>
+          </form>
+
+          <div class="profile-stats">
+            <h3>Health Stats</h3>
+            <p><strong>BMI:</strong> <span id="profile-bmi">–</span></p>
+            <p class="small-text">
+              BMI is an estimate only and may not reflect actual health status.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        &copy; <span id="footer-year"></span> Fitness Tracker. All rights
+        reserved.
+      </p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
 </html>
